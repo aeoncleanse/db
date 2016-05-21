@@ -1,8 +1,8 @@
--- MySQL dump 10.16  Distrib 10.1.4-MariaDB, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.12, for Linux (x86_64)
 --
--- Host: localhost    Database: faf_lobby
+-- Host: localhost    Database: faf_test
 -- ------------------------------------------------------
--- Server version	10.1.1-MariaDB-1~trusty-wsrep-log
+-- Server version 5.7.12
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -19,10 +19,9 @@
 -- Table structure for table `AI_names`
 --
 
-DROP TABLE IF EXISTS `AI_names`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `AI_names` (
+CREATE TABLE IF NOT EXISTS `AI_names` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary Key : ID .\nUnsigned car pas de valeurs negative.\nMEDIUMINT : 16 millions d''entrÃ©es maxi, meilleures perfs que INT\nSMALLINT : 65.000 entrÃ©es, ce qui peut etre largement suffisant.\nDoit etre contraint a l''id de la table info_clients.',
   `login` varchar(60) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL COMMENT 'login du clientMinimum 5 caracteres, VARCHAR peut fragmenter la DB, mais pas d''autres moyens ici.',
   PRIMARY KEY (`id`),
@@ -34,10 +33,9 @@ CREATE TABLE `AI_names` (
 -- Table structure for table `AI_rating`
 --
 
-DROP TABLE IF EXISTS `AI_rating`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `AI_rating` (
+CREATE TABLE IF NOT EXISTS `AI_rating` (
   `id` mediumint(8) unsigned NOT NULL,
   `mean` float DEFAULT NULL,
   `deviation` float DEFAULT NULL,
@@ -48,13 +46,35 @@ CREATE TABLE `AI_rating` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `achievement_definitions`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `achievement_definitions` (
+  `id` varchar(36) NOT NULL COMMENT 'The ID of the achievement.',
+  `order` int(10) unsigned NOT NULL COMMENT 'The order in which the achievement is displayed to the user.',
+  `name_key` varchar(255) NOT NULL COMMENT 'The message key for the name of the achievement.',
+  `description_key` varchar(255) NOT NULL COMMENT 'The message key for the description of the achievement.',
+  `type` enum('STANDARD','INCREMENTAL') NOT NULL COMMENT 'The type of the achievement. \nPossible values are:\n"STANDARD" - Achievement is either locked or unlocked.\n"INCREMENTAL" - Achievement is incremental.',
+  `total_steps` int(10) unsigned DEFAULT NULL COMMENT 'The total steps for an incremental achievement, NULL for standard achievements.',
+  `revealed_icon_url` varchar(2000) DEFAULT NULL COMMENT 'The image URL for the revealed achievement icon.',
+  `unlocked_icon_url` varchar(2000) DEFAULT NULL COMMENT 'The image URL for the unlocked achievement icon.',
+  `initial_state` enum('HIDDEN','REVEALED') NOT NULL COMMENT 'The initial state of the achievement. \nPossible values are:\n"HIDDEN" - Achievement is hidden.\n"REVEALED" - Achievement is revealed.\n"UNLOCKED" - Achievement is unlocked.',
+  `experience_points` int(10) unsigned NOT NULL COMMENT 'Experience points which will be earned when unlocking this achievement. Multiple of 5. Reference:\n5 - Easy to achieve\n20 - Medium\n50 - Hard to achieve',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `name_key_UNIQUE` (`name_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `auth_group`
 --
 
-DROP TABLE IF EXISTS `auth_group`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `auth_group` (
+CREATE TABLE IF NOT EXISTS `auth_group` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(80) NOT NULL,
   PRIMARY KEY (`id`),
@@ -66,10 +86,9 @@ CREATE TABLE `auth_group` (
 -- Table structure for table `auth_group_permissions`
 --
 
-DROP TABLE IF EXISTS `auth_group_permissions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `auth_group_permissions` (
+CREATE TABLE IF NOT EXISTS `auth_group_permissions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `group_id` int(11) NOT NULL,
   `permission_id` int(11) NOT NULL,
@@ -84,10 +103,9 @@ CREATE TABLE `auth_group_permissions` (
 -- Table structure for table `auth_permission`
 --
 
-DROP TABLE IF EXISTS `auth_permission`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `auth_permission` (
+CREATE TABLE IF NOT EXISTS `auth_permission` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `content_type_id` int(11) NOT NULL,
@@ -102,10 +120,9 @@ CREATE TABLE `auth_permission` (
 -- Table structure for table `auth_user`
 --
 
-DROP TABLE IF EXISTS `auth_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `auth_user` (
+CREATE TABLE IF NOT EXISTS `auth_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(30) NOT NULL,
   `first_name` varchar(30) NOT NULL,
@@ -126,10 +143,9 @@ CREATE TABLE `auth_user` (
 -- Table structure for table `auth_user_groups`
 --
 
-DROP TABLE IF EXISTS `auth_user_groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `auth_user_groups` (
+CREATE TABLE IF NOT EXISTS `auth_user_groups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `group_id` int(11) NOT NULL,
@@ -144,10 +160,9 @@ CREATE TABLE `auth_user_groups` (
 -- Table structure for table `auth_user_user_permissions`
 --
 
-DROP TABLE IF EXISTS `auth_user_user_permissions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `auth_user_user_permissions` (
+CREATE TABLE IF NOT EXISTS `auth_user_user_permissions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `permission_id` int(11) NOT NULL,
@@ -162,10 +177,9 @@ CREATE TABLE `auth_user_user_permissions` (
 -- Table structure for table `avatars`
 --
 
-DROP TABLE IF EXISTS `avatars`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `avatars` (
+CREATE TABLE IF NOT EXISTS `avatars` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `idUser` mediumint(8) unsigned NOT NULL,
   `idAvatar` int(10) unsigned NOT NULL,
@@ -181,10 +195,9 @@ CREATE TABLE `avatars` (
 -- Table structure for table `avatars_list`
 --
 
-DROP TABLE IF EXISTS `avatars_list`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `avatars_list` (
+CREATE TABLE IF NOT EXISTS `avatars_list` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `url` varchar(255) NOT NULL,
   `tooltip` varchar(50) DEFAULT NULL,
@@ -197,10 +210,9 @@ CREATE TABLE `avatars_list` (
 -- Table structure for table `avatars_list_copy_812015`
 --
 
-DROP TABLE IF EXISTS `avatars_list_copy_812015`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `avatars_list_copy_812015` (
+CREATE TABLE IF NOT EXISTS `avatars_list_copy_812015` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `url` varchar(255) NOT NULL,
   `tooltip` varchar(50) DEFAULT NULL,
@@ -213,10 +225,9 @@ CREATE TABLE `avatars_list_copy_812015` (
 -- Table structure for table `bet`
 --
 
-DROP TABLE IF EXISTS `bet`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `bet` (
+CREATE TABLE IF NOT EXISTS `bet` (
   `userid` mediumint(8) unsigned NOT NULL,
   `amount` int(11) NOT NULL,
   PRIMARY KEY (`userid`)
@@ -224,13 +235,69 @@ CREATE TABLE `bet` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `bugreport_status`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `bugreport_status` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `bugreport` int(11) NOT NULL,
+  `status_code` enum('unfiled','filed','dismissed') NOT NULL,
+  `url` varchar(255) DEFAULT NULL COMMENT 'If status is filed, then this should be a reference to a github issue',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `bugreport` (`bugreport`),
+  CONSTRAINT `bugreport` FOREIGN KEY (`bugreport`) REFERENCES `bugreports` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `bugreport_targets`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `bugreport_targets` (
+  `id` varchar(255) NOT NULL COMMENT 'Unique reference to the target, e.g. FAForever/client/tree/(hash)',
+  `name` varchar(255) NOT NULL COMMENT 'Name of the target, a github repository name',
+  `ref` varchar(255) NOT NULL COMMENT 'Reference of the target',
+  `url` varchar(255) NOT NULL COMMENT 'Url to the target',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `bugreports`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `bugreports` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `target` varchar(255) NOT NULL,
+  `automatic` tinyint(1) NOT NULL COMMENT 'Whether the report was automated or not',
+  `description` text COMMENT 'A (potentially markdown-formatted) description of the bug',
+  `log` text COMMENT 'Log associated with the report',
+  `traceback` text COMMENT 'Traceback associated with the report',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `bugreport_target` (`target`),
+  CONSTRAINT `bugreport_target` FOREIGN KEY (`target`) REFERENCES `bugreport_targets` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `coop_leaderboard`
 --
 
-DROP TABLE IF EXISTS `coop_leaderboard`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `coop_leaderboard` (
+CREATE TABLE IF NOT EXISTS `coop_leaderboard` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `mission` smallint(6) unsigned NOT NULL,
   `gameuid` bigint(20) unsigned NOT NULL,
@@ -245,10 +312,9 @@ CREATE TABLE `coop_leaderboard` (
 -- Table structure for table `coop_map`
 --
 
-DROP TABLE IF EXISTS `coop_map`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `coop_map` (
+CREATE TABLE IF NOT EXISTS `coop_map` (
   `type` tinyint(3) unsigned NOT NULL,
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(40) DEFAULT NULL,
@@ -265,12 +331,28 @@ CREATE TABLE `coop_map` (
 -- Table structure for table `email_domain_blacklist`
 --
 
-DROP TABLE IF EXISTS `email_domain_blacklist`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `email_domain_blacklist` (
+CREATE TABLE IF NOT EXISTS `email_domain_blacklist` (
   `domain` varchar(255) NOT NULL,
   UNIQUE KEY `domain_index` (`domain`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `event_definitions`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `event_definitions` (
+  `id` varchar(36) NOT NULL COMMENT 'The ID of the event.',
+  `name_key` varchar(255) NOT NULL COMMENT 'The message key for the name of the event.',
+  `image_url` varchar(45) DEFAULT NULL COMMENT 'The base URL for the image that represents the event.',
+  `type` enum('NUMERIC','TIME') NOT NULL COMMENT 'The type of the event.\nPossible values are:\n"NUMERIC" - Event is a plain number.\n"TIME" - Event is a measure of time.',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `name_key_UNIQUE` (`name_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -278,10 +360,9 @@ CREATE TABLE `email_domain_blacklist` (
 -- Table structure for table `featured_mods_owners`
 --
 
-DROP TABLE IF EXISTS `featured_mods_owners`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `featured_mods_owners` (
+CREATE TABLE IF NOT EXISTS `featured_mods_owners` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `uid` mediumint(8) unsigned NOT NULL,
   `moduid` tinyint(3) unsigned NOT NULL,
@@ -292,55 +373,45 @@ CREATE TABLE `featured_mods_owners` (
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `friends_and_foes`;
-CREATE TABLE friends_and_foes (
-  user_id MEDIUMINT UNSIGNED NOT NULL,
-  subject_id MEDIUMINT UNSIGNED NOT NULL,
-  status ENUM("FRIEND", "FOE"),
-  PRIMARY KEY(user_id, subject_id)
-);
+--
+-- Table structure for table `friends_and_foes`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `friends_and_foes` (
+  `user_id` mediumint(8) unsigned NOT NULL,
+  `subject_id` mediumint(8) unsigned NOT NULL,
+  `status` enum('FRIEND','FOE') DEFAULT NULL,
+  PRIMARY KEY (`user_id`,`subject_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `game_featuredMods`
 --
 
-DROP TABLE IF EXISTS `game_featuredMods`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `game_featuredMods` (
+CREATE TABLE IF NOT EXISTS `game_featuredMods` (
   `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
   `gamemod` varchar(50) DEFAULT NULL,
   `description` text NOT NULL,
   `name` varchar(255) NOT NULL,
   `publish` tinyint(1) NOT NULL DEFAULT '0',
+  `order` smallint(4) NOT NULL DEFAULT '0' COMMENT 'Order in the featured mods list',
   PRIMARY KEY (`id`),
   UNIQUE KEY `mod_name_idx` (`gamemod`)
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `game_min_rating`
---
-
-DROP TABLE IF EXISTS `game_min_rating`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `game_min_rating` (
-  `id` bigint(20) unsigned NOT NULL,
-  `minRating` float DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `game_min_rating_ibfk_1` FOREIGN KEY (`id`) REFERENCES `game_stats_bak` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `game_player_stats`
 --
 
-DROP TABLE IF EXISTS `game_player_stats`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `game_player_stats` (
+CREATE TABLE IF NOT EXISTS `game_player_stats` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `gameId` bigint(20) unsigned NOT NULL,
   `playerId` mediumint(8) unsigned NOT NULL,
@@ -365,27 +436,11 @@ CREATE TABLE `game_player_stats` (
 -- Table structure for table `game_replays`
 --
 
-DROP TABLE IF EXISTS `game_replays`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `game_replays` (
+CREATE TABLE IF NOT EXISTS `game_replays` (
   `UID` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`UID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `game_replays_old`
---
-
-DROP TABLE IF EXISTS `game_replays_old`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `game_replays_old` (
-  `UID` bigint(20) unsigned NOT NULL,
-  `file` longblob NOT NULL,
-  PRIMARY KEY (`UID`),
-  CONSTRAINT `game_replays_old_ibfk_1` FOREIGN KEY (`UID`) REFERENCES `game_stats_bak` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -393,21 +448,20 @@ CREATE TABLE `game_replays_old` (
 -- Table structure for table `game_stats`
 --
 
-DROP TABLE IF EXISTS `game_stats`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `game_stats` (
-  `id` int unsigned NOT NULL,
+CREATE TABLE IF NOT EXISTS `game_stats` (
+  `id` int(10) unsigned NOT NULL,
   `startTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `gameType` enum('0','1','2','3') NOT NULL,
   `gameMod` tinyint(3) unsigned NOT NULL,
   `host` mediumint(8) unsigned NOT NULL,
   `mapId` mediumint(8) unsigned NOT NULL,
   `gameName` varchar(128) NOT NULL,
-  `validity` tinyint NOT NULL,
+  `validity` tinyint(4) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `startTime` (`startTime`)
-) ENGINE=InnoDB AUTO_INCREMENT=3638965 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -425,15 +479,13 @@ DELIMITER ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 
-
 --
 -- Table structure for table `global_rating`
 --
 
-DROP TABLE IF EXISTS `global_rating`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `global_rating` (
+CREATE TABLE IF NOT EXISTS `global_rating` (
   `id` mediumint(8) unsigned NOT NULL,
   `mean` float DEFAULT NULL,
   `deviation` float DEFAULT NULL,
@@ -447,10 +499,9 @@ CREATE TABLE `global_rating` (
 -- Table structure for table `invalid_game_reasons`
 --
 
-DROP TABLE IF EXISTS `invalid_game_reasons`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `invalid_game_reasons` (
+CREATE TABLE IF NOT EXISTS `invalid_game_reasons` (
   `id` tinyint(4) NOT NULL AUTO_INCREMENT,
   `message` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
@@ -458,13 +509,28 @@ CREATE TABLE `invalid_game_reasons` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `jwt_users`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `jwt_users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(20) NOT NULL,
+  `public_key` varchar(1000) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username_UNIQUE` (`username`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `ladder1v1_rating`
 --
 
-DROP TABLE IF EXISTS `ladder1v1_rating`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ladder1v1_rating` (
+CREATE TABLE IF NOT EXISTS `ladder1v1_rating` (
   `id` mediumint(8) unsigned NOT NULL,
   `mean` float DEFAULT NULL,
   `deviation` float DEFAULT NULL,
@@ -479,10 +545,9 @@ CREATE TABLE `ladder1v1_rating` (
 -- Table structure for table `ladder_division`
 --
 
-DROP TABLE IF EXISTS `ladder_division`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ladder_division` (
+CREATE TABLE IF NOT EXISTS `ladder_division` (
   `id` int(10) unsigned NOT NULL,
   `name` varchar(255) NOT NULL,
   `league` tinyint(3) unsigned NOT NULL,
@@ -496,10 +561,9 @@ CREATE TABLE `ladder_division` (
 -- Table structure for table `ladder_divisions`
 --
 
-DROP TABLE IF EXISTS `ladder_divisions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ladder_divisions` (
+CREATE TABLE IF NOT EXISTS `ladder_divisions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
@@ -511,10 +575,9 @@ CREATE TABLE `ladder_divisions` (
 -- Table structure for table `ladder_map`
 --
 
-DROP TABLE IF EXISTS `ladder_map`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ladder_map` (
+CREATE TABLE IF NOT EXISTS `ladder_map` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `idmap` mediumint(8) unsigned NOT NULL,
   PRIMARY KEY (`id`),
@@ -527,10 +590,9 @@ CREATE TABLE `ladder_map` (
 -- Table structure for table `ladder_season_1`
 --
 
-DROP TABLE IF EXISTS `ladder_season_1`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ladder_season_1` (
+CREATE TABLE IF NOT EXISTS `ladder_season_1` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `idUser` mediumint(8) unsigned NOT NULL,
   `league` tinyint(1) unsigned NOT NULL,
@@ -545,10 +607,9 @@ CREATE TABLE `ladder_season_1` (
 -- Table structure for table `ladder_season_2`
 --
 
-DROP TABLE IF EXISTS `ladder_season_2`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ladder_season_2` (
+CREATE TABLE IF NOT EXISTS `ladder_season_2` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `idUser` mediumint(8) unsigned NOT NULL,
   `league` tinyint(1) unsigned NOT NULL,
@@ -563,10 +624,9 @@ CREATE TABLE `ladder_season_2` (
 -- Table structure for table `ladder_season_3`
 --
 
-DROP TABLE IF EXISTS `ladder_season_3`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ladder_season_3` (
+CREATE TABLE IF NOT EXISTS `ladder_season_3` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `idUser` mediumint(8) unsigned NOT NULL,
   `league` tinyint(1) unsigned NOT NULL,
@@ -583,10 +643,9 @@ CREATE TABLE `ladder_season_3` (
 -- Table structure for table `ladder_season_3_safe`
 --
 
-DROP TABLE IF EXISTS `ladder_season_3_safe`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ladder_season_3_safe` (
+CREATE TABLE IF NOT EXISTS `ladder_season_3_safe` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `idUser` mediumint(8) unsigned NOT NULL,
   `league` tinyint(1) unsigned NOT NULL,
@@ -603,10 +662,9 @@ CREATE TABLE `ladder_season_3_safe` (
 -- Table structure for table `ladder_season_4`
 --
 
-DROP TABLE IF EXISTS `ladder_season_4`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ladder_season_4` (
+CREATE TABLE IF NOT EXISTS `ladder_season_4` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `idUser` mediumint(8) unsigned NOT NULL,
   `league` tinyint(1) unsigned NOT NULL,
@@ -623,10 +681,9 @@ CREATE TABLE `ladder_season_4` (
 -- Table structure for table `ladder_season_5`
 --
 
-DROP TABLE IF EXISTS `ladder_season_5`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ladder_season_5` (
+CREATE TABLE IF NOT EXISTS `ladder_season_5` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `idUser` mediumint(8) unsigned NOT NULL,
   `league` tinyint(1) unsigned NOT NULL,
@@ -641,10 +698,9 @@ CREATE TABLE `ladder_season_5` (
 -- Table structure for table `lobby_admin`
 --
 
-DROP TABLE IF EXISTS `lobby_admin`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `lobby_admin` (
+CREATE TABLE IF NOT EXISTS `lobby_admin` (
   `user_id` int(11) NOT NULL,
   `group` tinyint(4) NOT NULL COMMENT '0 - no privileges; 1 - moderator, can delete/edit comments and approve broken maps reports; 2 - admin, same as moderator plus can add global bans',
   PRIMARY KEY (`user_id`)
@@ -655,12 +711,12 @@ CREATE TABLE `lobby_admin` (
 -- Table structure for table `lobby_ban`
 --
 
-DROP TABLE IF EXISTS `lobby_ban`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `lobby_ban` (
+CREATE TABLE IF NOT EXISTS `lobby_ban` (
   `idUser` mediumint(8) unsigned DEFAULT NULL,
   `reason` varchar(255) NOT NULL,
+  `expires_at` datetime DEFAULT NULL COMMENT 'When the ban expires',
   UNIQUE KEY `idUser` (`idUser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -669,37 +725,74 @@ CREATE TABLE `lobby_ban` (
 -- Table structure for table `login`
 --
 
-DROP TABLE IF EXISTS `login`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `login` (
+CREATE TABLE IF NOT EXISTS `login` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `login` varchar(20) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
   `password` char(77) NOT NULL,
   `salt` char(16) DEFAULT NULL,
-  `email` VARCHAR(254) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
+  `email` varchar(254) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
   `ip` varchar(15) CHARACTER SET latin1 COLLATE latin1_bin DEFAULT NULL,
   `steamid` bigint(20) unsigned DEFAULT NULL,
+  `create_time` timestamp NOT NULL COMMENT 'When the user signed up',
+  `update_time` timestamp NOT NULL COMMENT 'When the user last updated their information',
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_login` (`login`),
   UNIQUE KEY `unique_email` (`email`),
   UNIQUE KEY `steamid` (`steamid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=146315 DEFAULT CHARSET=latin1 COMMENT='login';
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`%`*/ /*!50003 TRIGGER login_BEFORE_INSERT BEFORE INSERT ON `login` FOR EACH ROW
+BEGIN
+        SET NEW.create_time = NOW();
+        SET NEW.update_time = NOW();
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`%`*/ /*!50003 TRIGGER login_BEFORE_UPDATE BEFORE UPDATE ON `login` FOR EACH ROW
+BEGIN
+        SET NEW.update_time = NOW();
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `login_with_duplicated_users`
 --
 
-DROP TABLE IF EXISTS `login_with_duplicated_users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `login_with_duplicated_users` (
+CREATE TABLE IF NOT EXISTS `login_with_duplicated_users` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `login` varchar(20) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
   `password` char(77) NOT NULL,
   `salt` char(16) DEFAULT NULL,
-  `email` VARCHAR(254) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
+  `email` varchar(254) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
   `ip` varchar(15) CHARACTER SET latin1 COLLATE latin1_bin DEFAULT NULL,
   `steamid` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -713,10 +806,9 @@ CREATE TABLE `login_with_duplicated_users` (
 -- Table structure for table `matchmaker_ban`
 --
 
-DROP TABLE IF EXISTS `matchmaker_ban`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `matchmaker_ban` (
+CREATE TABLE IF NOT EXISTS `matchmaker_ban` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `userid` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
@@ -724,13 +816,30 @@ CREATE TABLE `matchmaker_ban` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `messages`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `messages` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID of this entry.',
+  `key` varchar(255) NOT NULL COMMENT 'The message resource key that identifies this entry along with language and region.',
+  `language` char(2) NOT NULL COMMENT 'The language that identifies this entry along with key and region.',
+  `region` char(2) DEFAULT NULL COMMENT 'The region that identifies this entry along with key and language.',
+  `value` text COMMENT 'The message value.',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `key_language_region_UNIQUE` (`key`,`language`,`region`)
+) ENGINE=InnoDB AUTO_INCREMENT=143 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `name_history`
 --
 
-DROP TABLE IF EXISTS `name_history`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `name_history` (
+CREATE TABLE IF NOT EXISTS `name_history` (
   `change_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `user_id` mediumint(8) unsigned NOT NULL,
   `previous_name` varchar(20) NOT NULL,
@@ -740,13 +849,53 @@ CREATE TABLE `name_history` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `oauth_clients`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `oauth_clients` (
+  `id` varchar(36) NOT NULL COMMENT 'A string that identifies the client, preferably a UUID.',
+  `name` varchar(100) NOT NULL COMMENT 'Human readable client name.',
+  `client_secret` varchar(55) NOT NULL COMMENT 'The client''s secret, a random string.',
+  `client_type` enum('confidential','public') NOT NULL DEFAULT 'public' COMMENT 'A string represents if the client is confidential or public.',
+  `redirect_uris` text NOT NULL COMMENT 'A space delimited list of redirect URIs.',
+  `default_redirect_uri` varchar(2000) NOT NULL COMMENT 'One of the redirect uris.',
+  `default_scope` text NOT NULL COMMENT 'A space delimited list of default scopes of the client.',
+  `icon_url` varchar(2000) DEFAULT NULL COMMENT 'URL to a square image representing the client.',
+  UNIQUE KEY `name_UNIQUE` (`name`),
+  UNIQUE KEY `client_id_UNIQUE` (`id`),
+  UNIQUE KEY `client_secret_UNIQUE` (`client_secret`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `oauth_tokens`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `oauth_tokens` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Auto incremented, technical ID.',
+  `token_type` varchar(45) NOT NULL,
+  `access_token` varchar(36) NOT NULL COMMENT 'A string token (UUID).',
+  `refresh_token` varchar(36) DEFAULT NULL COMMENT 'A string token (UUID).',
+  `client_id` varchar(36) NOT NULL COMMENT 'ID of the client (FK).',
+  `scope` text NOT NULL COMMENT 'A space delimited list of scopes.',
+  `expires` timestamp NOT NULL COMMENT 'Expiration time of the token.',
+  `user_id` int(10) unsigned NOT NULL COMMENT 'ID of the user (FK).',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `patchs_table`
 --
 
-DROP TABLE IF EXISTS `patchs_table`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `patchs_table` (
+CREATE TABLE IF NOT EXISTS `patchs_table` (
   `idpatchs_table` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fromMd5` varchar(45) DEFAULT NULL,
   `toMd5` varchar(45) DEFAULT NULL,
@@ -756,13 +905,125 @@ CREATE TABLE `patchs_table` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `player_achievements`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `player_achievements` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'The ID of the player achievement.',
+  `player_id` int(10) unsigned NOT NULL COMMENT 'The ID of the owning player (FK).',
+  `achievement_id` varchar(36) NOT NULL COMMENT 'The ID of the referenced achievement (FK).',
+  `current_steps` int(10) unsigned DEFAULT NULL COMMENT 'The current steps for an incremental achievement.',
+  `state` enum('HIDDEN','REVEALED','UNLOCKED') NOT NULL COMMENT 'The state of the achievement. \nPossible values are:\n"HIDDEN" - Achievement is hidden.\n"REVEALED" - Achievement is revealed.\n"UNLOCKED" - Achievement is unlocked.',
+  `create_time` timestamp NOT NULL COMMENT 'When this entry was created.',
+  `update_time` timestamp NOT NULL COMMENT 'When this entry was updated',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `player_achievement_UNIQUE` (`player_id`,`achievement_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`%`*/ /*!50003 TRIGGER `player_achievements_BEFORE_INSERT` BEFORE INSERT ON `player_achievements` FOR EACH ROW
+BEGIN
+  SET NEW.create_time = NOW();
+  SET NEW.update_time = NOW();
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`%`*/ /*!50003 TRIGGER `player_achievements_BEFORE_UPDATE` BEFORE UPDATE ON `player_achievements` FOR EACH ROW
+BEGIN
+  SET NEW.update_time = NOW();
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Table structure for table `player_events`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `player_events` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID of this entry.',
+  `player_id` int(10) unsigned NOT NULL COMMENT 'The ID of the player that triggered this event.',
+  `event_id` varchar(36) NOT NULL COMMENT 'The ID of the event definition.',
+  `count` int(10) unsigned NOT NULL COMMENT 'The current number of times this event has occurred.',
+  `create_time` timestamp NOT NULL COMMENT 'When this entry was created.',
+  `update_time` timestamp NOT NULL COMMENT 'When this entry was updated',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `event_player_UNIQUE` (`player_id`,`event_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`%`*/ /*!50003 TRIGGER `player_events_BEFORE_INSERT` BEFORE INSERT ON `player_events` FOR EACH ROW
+BEGIN
+  SET NEW.create_time = NOW();
+  SET NEW.update_time = NOW();
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`%`*/ /*!50003 TRIGGER `player_events_BEFORE_UPDATE` BEFORE UPDATE ON `player_events` FOR EACH ROW
+BEGIN
+  SET NEW.update_time = NOW();
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
 -- Table structure for table `recoveryemails_enc`
 --
 
-DROP TABLE IF EXISTS `recoveryemails_enc`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `recoveryemails_enc` (
+CREATE TABLE IF NOT EXISTS `recoveryemails_enc` (
   `ID` bigint(20) unsigned zerofill NOT NULL AUTO_INCREMENT,
   `UserID` mediumint(8) unsigned NOT NULL,
   `Key` varchar(32) NOT NULL,
@@ -776,10 +1037,9 @@ CREATE TABLE `recoveryemails_enc` (
 -- Table structure for table `replay_vault`
 --
 
-DROP TABLE IF EXISTS `replay_vault`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `replay_vault` (
+CREATE TABLE IF NOT EXISTS `replay_vault` (
   `id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `gameName` tinytext,
   `filename` varchar(200) DEFAULT NULL,
@@ -804,10 +1064,9 @@ CREATE TABLE `replay_vault` (
 -- Table structure for table `smurf_table`
 --
 
-DROP TABLE IF EXISTS `smurf_table`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `smurf_table` (
+CREATE TABLE IF NOT EXISTS `smurf_table` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `origId` mediumint(8) unsigned NOT NULL,
   `smurfId` mediumint(8) unsigned NOT NULL,
@@ -819,13 +1078,25 @@ CREATE TABLE `smurf_table` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `steam_link_request`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `steam_link_request` (
+  `uid` varchar(255) NOT NULL,
+  `Key` varchar(255) NOT NULL,
+  `expDate` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `swiss_tournaments`
 --
 
-DROP TABLE IF EXISTS `swiss_tournaments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `swiss_tournaments` (
+CREATE TABLE IF NOT EXISTS `swiss_tournaments` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `host` mediumint(8) unsigned DEFAULT NULL,
@@ -845,10 +1116,9 @@ CREATE TABLE `swiss_tournaments` (
 -- Table structure for table `swiss_tournaments_players`
 --
 
-DROP TABLE IF EXISTS `swiss_tournaments_players`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `swiss_tournaments_players` (
+CREATE TABLE IF NOT EXISTS `swiss_tournaments_players` (
   `id` smallint(5) unsigned zerofill NOT NULL AUTO_INCREMENT,
   `idtourney` mediumint(8) unsigned NOT NULL,
   `iduser` mediumint(8) unsigned NOT NULL,
@@ -864,10 +1134,9 @@ CREATE TABLE `swiss_tournaments_players` (
 -- Table structure for table `table_map`
 --
 
-DROP TABLE IF EXISTS `table_map`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `table_map` (
+CREATE TABLE IF NOT EXISTS `table_map` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(40) DEFAULT NULL,
   `description` longtext,
@@ -891,10 +1160,9 @@ CREATE TABLE `table_map` (
 -- Table structure for table `table_map_broken`
 --
 
-DROP TABLE IF EXISTS `table_map_broken`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `table_map_broken` (
+CREATE TABLE IF NOT EXISTS `table_map_broken` (
   `broken_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `map_id` mediumint(8) unsigned NOT NULL,
   `description` text NOT NULL,
@@ -911,10 +1179,9 @@ CREATE TABLE `table_map_broken` (
 -- Table structure for table `table_map_comments`
 --
 
-DROP TABLE IF EXISTS `table_map_comments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `table_map_comments` (
+CREATE TABLE IF NOT EXISTS `table_map_comments` (
   `comment_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `map_id` mediumint(8) unsigned NOT NULL,
   `user_id` mediumint(8) unsigned NOT NULL,
@@ -931,10 +1198,9 @@ CREATE TABLE `table_map_comments` (
 -- Table structure for table `table_map_features`
 --
 
-DROP TABLE IF EXISTS `table_map_features`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `table_map_features` (
+CREATE TABLE IF NOT EXISTS `table_map_features` (
   `map_id` mediumint(8) unsigned NOT NULL,
   `rating` float NOT NULL DEFAULT '0',
   `voters` text NOT NULL,
@@ -950,10 +1216,9 @@ CREATE TABLE `table_map_features` (
 -- Table structure for table `table_map_unranked`
 --
 
-DROP TABLE IF EXISTS `table_map_unranked`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `table_map_unranked` (
+CREATE TABLE IF NOT EXISTS `table_map_unranked` (
   `id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -963,10 +1228,9 @@ CREATE TABLE `table_map_unranked` (
 -- Table structure for table `table_map_uploaders`
 --
 
-DROP TABLE IF EXISTS `table_map_uploaders`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `table_map_uploaders` (
+CREATE TABLE IF NOT EXISTS `table_map_uploaders` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `mapid` mediumint(8) unsigned NOT NULL,
   `userid` mediumint(8) unsigned NOT NULL,
@@ -981,18 +1245,15 @@ CREATE TABLE `table_map_uploaders` (
 -- Table structure for table `table_mod`
 --
 
-DROP TABLE IF EXISTS `table_mod`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `table_mod` (
+CREATE TABLE IF NOT EXISTS `table_mod` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `uid` varchar(40) NOT NULL,
   `name` varchar(255) NOT NULL,
   `version` smallint(5) unsigned NOT NULL,
   `author` varchar(100) NOT NULL,
   `ui` tinyint(4) NOT NULL,
-  `big` tinyint(3) unsigned NOT NULL,
-  `small` tinyint(3) unsigned NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `downloads` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `likes` mediumint(8) unsigned NOT NULL DEFAULT '0',
@@ -1004,17 +1265,16 @@ CREATE TABLE `table_mod` (
   `ranked` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uid` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=795 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=798 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `test`
 --
 
-DROP TABLE IF EXISTS `test`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `test` (
+CREATE TABLE IF NOT EXISTS `test` (
   `id` int(11) NOT NULL,
   `file` longblob NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -1024,10 +1284,9 @@ CREATE TABLE `test` (
 -- Table structure for table `test2`
 --
 
-DROP TABLE IF EXISTS `test2`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `test2` (
+CREATE TABLE IF NOT EXISTS `test2` (
   `id` int(11) NOT NULL,
   `test` int(11) NOT NULL
 ) ENGINE=MEMORY DEFAULT CHARSET=latin1;
@@ -1037,10 +1296,9 @@ CREATE TABLE `test2` (
 -- Table structure for table `test3`
 --
 
-DROP TABLE IF EXISTS `test3`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `test3` (
+CREATE TABLE IF NOT EXISTS `test3` (
   `id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1049,10 +1307,9 @@ CREATE TABLE `test3` (
 -- Table structure for table `test_game_replays`
 --
 
-DROP TABLE IF EXISTS `test_game_replays`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `test_game_replays` (
+CREATE TABLE IF NOT EXISTS `test_game_replays` (
   `UID` bigint(20) unsigned NOT NULL,
   `file` longblob NOT NULL,
   PRIMARY KEY (`UID`)
@@ -1063,10 +1320,9 @@ CREATE TABLE `test_game_replays` (
 -- Table structure for table `tutorial_sections`
 --
 
-DROP TABLE IF EXISTS `tutorial_sections`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tutorial_sections` (
+CREATE TABLE IF NOT EXISTS `tutorial_sections` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `section` varchar(45) NOT NULL,
   `description` varchar(100) NOT NULL,
@@ -1078,10 +1334,9 @@ CREATE TABLE `tutorial_sections` (
 -- Table structure for table `tutorials`
 --
 
-DROP TABLE IF EXISTS `tutorials`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tutorials` (
+CREATE TABLE IF NOT EXISTS `tutorials` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `section` int(10) unsigned NOT NULL,
   `name` varchar(45) NOT NULL,
@@ -1098,25 +1353,22 @@ CREATE TABLE `tutorials` (
 -- Table structure for table `unique_id_users`
 --
 
-DROP TABLE IF EXISTS `unique_id_users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `unique_id_users` (
-  `id` mediumint(8) NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `unique_id_users` (
   `user_id` mediumint(8) unsigned NOT NULL,
   `uniqueid_hash` char(32) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=589816 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`user_id`,`uniqueid_hash`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `uniqueid`
 --
 
-DROP TABLE IF EXISTS `uniqueid`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `uniqueid` (
+CREATE TABLE IF NOT EXISTS `uniqueid` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `hash` char(32) DEFAULT NULL,
   `uuid` varchar(255) NOT NULL,
@@ -1137,10 +1389,9 @@ CREATE TABLE `uniqueid` (
 -- Table structure for table `uniqueid_exempt`
 --
 
-DROP TABLE IF EXISTS `uniqueid_exempt`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `uniqueid_exempt` (
+CREATE TABLE IF NOT EXISTS `uniqueid_exempt` (
   `user_id` mediumint(8) unsigned DEFAULT NULL,
   `reason` varchar(255) NOT NULL,
   UNIQUE KEY `user_id` (`user_id`)
@@ -1151,10 +1402,9 @@ CREATE TABLE `uniqueid_exempt` (
 -- Table structure for table `updates`
 --
 
-DROP TABLE IF EXISTS `updates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates` (
+CREATE TABLE IF NOT EXISTS `updates` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `file` varchar(45) DEFAULT NULL,
   `md5` varchar(45) DEFAULT NULL,
@@ -1166,10 +1416,9 @@ CREATE TABLE `updates` (
 -- Table structure for table `updates_balancetesting`
 --
 
-DROP TABLE IF EXISTS `updates_balancetesting`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_balancetesting` (
+CREATE TABLE IF NOT EXISTS `updates_balancetesting` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1181,10 +1430,9 @@ CREATE TABLE `updates_balancetesting` (
 -- Table structure for table `updates_balancetesting_files`
 --
 
-DROP TABLE IF EXISTS `updates_balancetesting_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_balancetesting_files` (
+CREATE TABLE IF NOT EXISTS `updates_balancetesting_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1200,10 +1448,9 @@ CREATE TABLE `updates_balancetesting_files` (
 -- Table structure for table `updates_blackops`
 --
 
-DROP TABLE IF EXISTS `updates_blackops`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_blackops` (
+CREATE TABLE IF NOT EXISTS `updates_blackops` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1215,10 +1462,9 @@ CREATE TABLE `updates_blackops` (
 -- Table structure for table `updates_blackops_files`
 --
 
-DROP TABLE IF EXISTS `updates_blackops_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_blackops_files` (
+CREATE TABLE IF NOT EXISTS `updates_blackops_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1234,10 +1480,9 @@ CREATE TABLE `updates_blackops_files` (
 -- Table structure for table `updates_civilians`
 --
 
-DROP TABLE IF EXISTS `updates_civilians`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_civilians` (
+CREATE TABLE IF NOT EXISTS `updates_civilians` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1249,10 +1494,9 @@ CREATE TABLE `updates_civilians` (
 -- Table structure for table `updates_civilians_files`
 --
 
-DROP TABLE IF EXISTS `updates_civilians_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_civilians_files` (
+CREATE TABLE IF NOT EXISTS `updates_civilians_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1268,10 +1512,9 @@ CREATE TABLE `updates_civilians_files` (
 -- Table structure for table `updates_claustrophobia`
 --
 
-DROP TABLE IF EXISTS `updates_claustrophobia`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_claustrophobia` (
+CREATE TABLE IF NOT EXISTS `updates_claustrophobia` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1283,10 +1526,9 @@ CREATE TABLE `updates_claustrophobia` (
 -- Table structure for table `updates_claustrophobia_files`
 --
 
-DROP TABLE IF EXISTS `updates_claustrophobia_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_claustrophobia_files` (
+CREATE TABLE IF NOT EXISTS `updates_claustrophobia_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1302,10 +1544,9 @@ CREATE TABLE `updates_claustrophobia_files` (
 -- Table structure for table `updates_coop`
 --
 
-DROP TABLE IF EXISTS `updates_coop`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_coop` (
+CREATE TABLE IF NOT EXISTS `updates_coop` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1317,10 +1558,9 @@ CREATE TABLE `updates_coop` (
 -- Table structure for table `updates_coop_files`
 --
 
-DROP TABLE IF EXISTS `updates_coop_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_coop_files` (
+CREATE TABLE IF NOT EXISTS `updates_coop_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1336,10 +1576,9 @@ CREATE TABLE `updates_coop_files` (
 -- Table structure for table `updates_diamond`
 --
 
-DROP TABLE IF EXISTS `updates_diamond`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_diamond` (
+CREATE TABLE IF NOT EXISTS `updates_diamond` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1351,10 +1590,9 @@ CREATE TABLE `updates_diamond` (
 -- Table structure for table `updates_diamond_files`
 --
 
-DROP TABLE IF EXISTS `updates_diamond_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_diamond_files` (
+CREATE TABLE IF NOT EXISTS `updates_diamond_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1370,10 +1608,9 @@ CREATE TABLE `updates_diamond_files` (
 -- Table structure for table `updates_engyredesign`
 --
 
-DROP TABLE IF EXISTS `updates_engyredesign`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_engyredesign` (
+CREATE TABLE IF NOT EXISTS `updates_engyredesign` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1385,10 +1622,9 @@ CREATE TABLE `updates_engyredesign` (
 -- Table structure for table `updates_engyredesign_files`
 --
 
-DROP TABLE IF EXISTS `updates_engyredesign_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_engyredesign_files` (
+CREATE TABLE IF NOT EXISTS `updates_engyredesign_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1403,10 +1639,9 @@ CREATE TABLE `updates_engyredesign_files` (
 -- Table structure for table `updates_faf`
 --
 
-DROP TABLE IF EXISTS `updates_faf`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_faf` (
+CREATE TABLE IF NOT EXISTS `updates_faf` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1418,10 +1653,9 @@ CREATE TABLE `updates_faf` (
 -- Table structure for table `updates_faf_files`
 --
 
-DROP TABLE IF EXISTS `updates_faf_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_faf_files` (
+CREATE TABLE IF NOT EXISTS `updates_faf_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1437,10 +1671,9 @@ CREATE TABLE `updates_faf_files` (
 -- Table structure for table `updates_gw`
 --
 
-DROP TABLE IF EXISTS `updates_gw`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_gw` (
+CREATE TABLE IF NOT EXISTS `updates_gw` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1452,10 +1685,9 @@ CREATE TABLE `updates_gw` (
 -- Table structure for table `updates_gw_files`
 --
 
-DROP TABLE IF EXISTS `updates_gw_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_gw_files` (
+CREATE TABLE IF NOT EXISTS `updates_gw_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1471,10 +1703,9 @@ CREATE TABLE `updates_gw_files` (
 -- Table structure for table `updates_koth`
 --
 
-DROP TABLE IF EXISTS `updates_koth`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_koth` (
+CREATE TABLE IF NOT EXISTS `updates_koth` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1486,10 +1717,9 @@ CREATE TABLE `updates_koth` (
 -- Table structure for table `updates_koth_files`
 --
 
-DROP TABLE IF EXISTS `updates_koth_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_koth_files` (
+CREATE TABLE IF NOT EXISTS `updates_koth_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1505,10 +1735,9 @@ CREATE TABLE `updates_koth_files` (
 -- Table structure for table `updates_labwars`
 --
 
-DROP TABLE IF EXISTS `updates_labwars`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_labwars` (
+CREATE TABLE IF NOT EXISTS `updates_labwars` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1520,10 +1749,9 @@ CREATE TABLE `updates_labwars` (
 -- Table structure for table `updates_labwars_files`
 --
 
-DROP TABLE IF EXISTS `updates_labwars_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_labwars_files` (
+CREATE TABLE IF NOT EXISTS `updates_labwars_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1539,10 +1767,9 @@ CREATE TABLE `updates_labwars_files` (
 -- Table structure for table `updates_matchmaker`
 --
 
-DROP TABLE IF EXISTS `updates_matchmaker`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_matchmaker` (
+CREATE TABLE IF NOT EXISTS `updates_matchmaker` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1554,10 +1781,9 @@ CREATE TABLE `updates_matchmaker` (
 -- Table structure for table `updates_matchmaker_files`
 --
 
-DROP TABLE IF EXISTS `updates_matchmaker_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_matchmaker_files` (
+CREATE TABLE IF NOT EXISTS `updates_matchmaker_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1573,10 +1799,9 @@ CREATE TABLE `updates_matchmaker_files` (
 -- Table structure for table `updates_murderparty`
 --
 
-DROP TABLE IF EXISTS `updates_murderparty`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_murderparty` (
+CREATE TABLE IF NOT EXISTS `updates_murderparty` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1588,10 +1813,9 @@ CREATE TABLE `updates_murderparty` (
 -- Table structure for table `updates_murderparty_files`
 --
 
-DROP TABLE IF EXISTS `updates_murderparty_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_murderparty_files` (
+CREATE TABLE IF NOT EXISTS `updates_murderparty_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1607,10 +1831,9 @@ CREATE TABLE `updates_murderparty_files` (
 -- Table structure for table `updates_nomads`
 --
 
-DROP TABLE IF EXISTS `updates_nomads`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_nomads` (
+CREATE TABLE IF NOT EXISTS `updates_nomads` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1622,10 +1845,9 @@ CREATE TABLE `updates_nomads` (
 -- Table structure for table `updates_nomads_files`
 --
 
-DROP TABLE IF EXISTS `updates_nomads_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_nomads_files` (
+CREATE TABLE IF NOT EXISTS `updates_nomads_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1641,10 +1863,9 @@ CREATE TABLE `updates_nomads_files` (
 -- Table structure for table `updates_phantomx`
 --
 
-DROP TABLE IF EXISTS `updates_phantomx`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_phantomx` (
+CREATE TABLE IF NOT EXISTS `updates_phantomx` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1656,10 +1877,9 @@ CREATE TABLE `updates_phantomx` (
 -- Table structure for table `updates_phantomx_files`
 --
 
-DROP TABLE IF EXISTS `updates_phantomx_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_phantomx_files` (
+CREATE TABLE IF NOT EXISTS `updates_phantomx_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1675,10 +1895,9 @@ CREATE TABLE `updates_phantomx_files` (
 -- Table structure for table `updates_supremeDestruction`
 --
 
-DROP TABLE IF EXISTS `updates_supremeDestruction`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_supremeDestruction` (
+CREATE TABLE IF NOT EXISTS `updates_supremeDestruction` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1690,10 +1909,9 @@ CREATE TABLE `updates_supremeDestruction` (
 -- Table structure for table `updates_supremeDestruction_files`
 --
 
-DROP TABLE IF EXISTS `updates_supremeDestruction_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_supremeDestruction_files` (
+CREATE TABLE IF NOT EXISTS `updates_supremeDestruction_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1709,10 +1927,9 @@ CREATE TABLE `updates_supremeDestruction_files` (
 -- Table structure for table `updates_vanilla`
 --
 
-DROP TABLE IF EXISTS `updates_vanilla`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_vanilla` (
+CREATE TABLE IF NOT EXISTS `updates_vanilla` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1724,10 +1941,9 @@ CREATE TABLE `updates_vanilla` (
 -- Table structure for table `updates_vanilla_files`
 --
 
-DROP TABLE IF EXISTS `updates_vanilla_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_vanilla_files` (
+CREATE TABLE IF NOT EXISTS `updates_vanilla_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1743,10 +1959,9 @@ CREATE TABLE `updates_vanilla_files` (
 -- Table structure for table `updates_wyvern`
 --
 
-DROP TABLE IF EXISTS `updates_wyvern`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_wyvern` (
+CREATE TABLE IF NOT EXISTS `updates_wyvern` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1758,10 +1973,9 @@ CREATE TABLE `updates_wyvern` (
 -- Table structure for table `updates_wyvern_files`
 --
 
-DROP TABLE IF EXISTS `updates_wyvern_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_wyvern_files` (
+CREATE TABLE IF NOT EXISTS `updates_wyvern_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1776,10 +1990,9 @@ CREATE TABLE `updates_wyvern_files` (
 -- Table structure for table `updates_xtremewars`
 --
 
-DROP TABLE IF EXISTS `updates_xtremewars`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_xtremewars` (
+CREATE TABLE IF NOT EXISTS `updates_xtremewars` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `filename` varchar(45) NOT NULL,
   `path` varchar(45) NOT NULL,
@@ -1791,10 +2004,9 @@ CREATE TABLE `updates_xtremewars` (
 -- Table structure for table `updates_xtremewars_files`
 --
 
-DROP TABLE IF EXISTS `updates_xtremewars_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `updates_xtremewars_files` (
+CREATE TABLE IF NOT EXISTS `updates_xtremewars_files` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `fileId` smallint(5) unsigned NOT NULL,
   `version` int(11) NOT NULL,
@@ -1810,10 +2022,9 @@ CREATE TABLE `updates_xtremewars_files` (
 -- Table structure for table `vault_admin`
 --
 
-DROP TABLE IF EXISTS `vault_admin`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `vault_admin` (
+CREATE TABLE IF NOT EXISTS `vault_admin` (
   `user_id` int(11) NOT NULL,
   `group` tinyint(4) NOT NULL COMMENT '0 - no privileges; 1 - moderator, can delete/edit comments and approve broken maps reports; 2 - admin, same as moderator plus can delete maps from vault',
   PRIMARY KEY (`user_id`)
@@ -1824,13 +2035,12 @@ CREATE TABLE `vault_admin` (
 -- Table structure for table `version_lobby`
 --
 
-DROP TABLE IF EXISTS `version_lobby`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `version_lobby` (
+CREATE TABLE IF NOT EXISTS `version_lobby` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `file` varchar(100) DEFAULT NULL,
-  `version` int(11) unsigned DEFAULT NULL,
+  `version` varchar(100) NOT NULL COMMENT 'Current version of the official client',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1839,10 +2049,9 @@ CREATE TABLE `version_lobby` (
 -- Table structure for table `view_global_rating`
 --
 
-DROP TABLE IF EXISTS `view_global_rating`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `view_global_rating` (
+CREATE TABLE IF NOT EXISTS `view_global_rating` (
   `id` mediumint(8) unsigned NOT NULL,
   `mean` float DEFAULT NULL,
   `deviation` float DEFAULT NULL,
@@ -1856,10 +2065,9 @@ CREATE TABLE `view_global_rating` (
 -- Table structure for table `vm_exempt`
 --
 
-DROP TABLE IF EXISTS `vm_exempt`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `vm_exempt` (
+CREATE TABLE IF NOT EXISTS `vm_exempt` (
   `idUser` mediumint(8) unsigned DEFAULT NULL,
   `reason` varchar(255) NOT NULL,
   UNIQUE KEY `idUser` (`idUser`)
@@ -1875,4 +2083,4 @@ CREATE TABLE `vm_exempt` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-08-14 12:42:43
+-- Dump completed on 2016-05-18 17:07:22
